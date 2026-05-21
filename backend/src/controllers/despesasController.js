@@ -14,8 +14,8 @@ const listar = async (req, res) => {
 
   if (mes && ano) {
     query += `
-      AND EXTRACT(MONTH FROM data) = $${index}
-      AND EXTRACT(YEAR FROM data) = $${index + 1}
+      AND EXTRACT(MONTH FROM data)::int = $${index}
+      AND EXTRACT(YEAR FROM data)::int = $${index + 1}
     `;
 
     params.push(mes, ano);
@@ -23,7 +23,7 @@ const listar = async (req, res) => {
 
   } else if (ano) {
     query += `
-      AND EXTRACT(YEAR FROM data) = $${index}
+      AND EXTRACT(YEAR FROM data)::int = $${index}
     `;
 
     params.push(ano);

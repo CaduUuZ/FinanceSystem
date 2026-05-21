@@ -14,8 +14,8 @@ const resumo = async (req, res) => {
       SELECT COALESCE(SUM(valor), 0) AS "totalReceitas"
       FROM receitas
       WHERE user_id = $1
-      AND EXTRACT(MONTH FROM data) = $2
-      AND EXTRACT(YEAR FROM data) = $3
+      AND EXTRACT(MONTH FROM data)::int = $2
+      AND EXTRACT(YEAR FROM data)::int = $3
       `,
       [req.userId, mesAtual, anoAtual]
     );
@@ -29,8 +29,8 @@ const resumo = async (req, res) => {
       SELECT COALESCE(SUM(valor), 0) AS "totalDespesas"
       FROM despesas
       WHERE user_id = $1
-      AND EXTRACT(MONTH FROM data) = $2
-      AND EXTRACT(YEAR FROM data) = $3
+      AND EXTRACT(MONTH FROM data)::int = $2
+      AND EXTRACT(YEAR FROM data)::int = $3
       `,
       [req.userId, mesAtual, anoAtual]
     );
@@ -44,8 +44,8 @@ const resumo = async (req, res) => {
       SELECT categoria, SUM(valor) AS total
       FROM receitas
       WHERE user_id = $1
-      AND EXTRACT(MONTH FROM data) = $2
-      AND EXTRACT(YEAR FROM data) = $3
+      AND EXTRACT(MONTH FROM data)::int = $2
+      AND EXTRACT(YEAR FROM data)::int = $3
       GROUP BY categoria
       `,
       [req.userId, mesAtual, anoAtual]
@@ -60,8 +60,8 @@ const resumo = async (req, res) => {
       SELECT categoria, SUM(valor) AS total
       FROM despesas
       WHERE user_id = $1
-      AND EXTRACT(MONTH FROM data) = $2
-      AND EXTRACT(YEAR FROM data) = $3
+      AND EXTRACT(MONTH FROM data)::int = $2
+      AND EXTRACT(YEAR FROM data)::int = $3
       GROUP BY categoria
       `,
       [req.userId, mesAtual, anoAtual]
@@ -74,11 +74,11 @@ const resumo = async (req, res) => {
     const evolucaoReceitasResult = await pool.query(
       `
       SELECT
-        EXTRACT(MONTH FROM data) AS mes,
+        EXTRACT(MONTH FROM data)::int AS mes,
         SUM(valor) AS total
       FROM receitas
       WHERE user_id = $1
-      AND EXTRACT(YEAR FROM data) = $2
+      AND EXTRACT(YEAR FROM data)::int = $2
       GROUP BY mes
       ORDER BY mes
       `,
@@ -92,11 +92,11 @@ const resumo = async (req, res) => {
     const evolucaoDespesasResult = await pool.query(
       `
       SELECT
-        EXTRACT(MONTH FROM data) AS mes,
+        EXTRACT(MONTH FROM data)::int AS mes,
         SUM(valor) AS total
       FROM despesas
       WHERE user_id = $1
-      AND EXTRACT(YEAR FROM data) = $2
+      AND EXTRACT(YEAR FROM data)::int = $2
       GROUP BY mes
       ORDER BY mes
       `,
