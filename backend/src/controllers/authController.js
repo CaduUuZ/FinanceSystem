@@ -65,30 +65,60 @@ const login = async (req, res) => {
   const { email, senha } = req.body;
 
   if (!email || !senha) {
-    return res.status(400).json({ error: "Email e senha são obrigatórios" });
+    return res.status(400).json({
+      error: "Email e senha são obrigatórios"
+    });
   }
 
   try {
-    const [users] = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
-    if (users.length === 0) {
-      return res.status(401).json({ error: "Email ou senha incorretos" });
+    const result = await pool.query(
+      "SELECT * FROM users WHERE email = $1",
+      [email]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({
+        error: "Email ou senha incorretos"
+      });
     }
 
-    const user = users[0];
-    const senhaCorreta = await bcrypt.compare(senha, user.senha);
+    const user = result.rows[0];
+
+    const senhaCorreta = await bcrypt.compare(
+      senha,
+      user.senha
+    );
+
     if (!senhaCorreta) {
-      return res.status(401).json({ error: "Email ou senha incorretos" });
+      return res.status(401).json({
+        error: "Email ou senha incorretos"
+      });
     }
 
-    const token = jwt.sign({ id: user.id, nome: user.nome }, JWT_SECRET, { expiresIn: "7d" });
+    const token = jwt.sign(
+      {
+        id: user.id,
+        nome: user.nome
+      },
+      JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
     res.json({
       token,
-      user: { id: user.id, nome: user.nome, email: user.email },
+      user: {
+        id: user.id,
+        nome: user.nome,
+        email: user.email
+      }
     });
+
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Erro interno do servidor" });
+
+    res.status(500).json({
+      error: "Erro interno do servidor"
+    });
   }
 };
 
